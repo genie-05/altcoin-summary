@@ -1,0 +1,313 @@
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">미주부 MZB 포트폴리오 MVP 대시보드</h2>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F6F3;--white:#FFFFFF;--border:#E2DDD6;--border2:#EDEAE4;
+  --txt:#1C1917;--txt2:#78716C;--txt3:#A8A29E;
+  --sb:#0D5C2A;--sb-bg:#DCFCE7;--sb-txt:#14532D;
+  --b:#197A3C;--b-bg:#DCFCE7;--b-txt:#166534;
+  --h:#92400E;--h-bg:#FEF3C7;--h-txt:#78350F;
+  --s:#9A3412;--s-bg:#FEE2E2;--s-txt:#7F1D1D;
+  --ss:#7F1D1D;--ss-bg:#FEE2E2;--ss-txt:#450A0A;
+  --accent:#1C5FA8;
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--txt);font-size:13px}
+.mono{font-family:'DM Mono',monospace}
+
+/* top bar */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;height:48px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:26px;height:26px;border-radius:5px;background:#1C5FA8;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;font-family:'DM Mono',monospace}
+.brand-name{font-weight:700;font-size:14px;letter-spacing:-.3px}
+.brand-tag{font-size:11px;color:var(--txt2);padding:1px 7px;border:1px solid var(--border);border-radius:10px;margin-left:4px}
+.topbar-right{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--txt2)}
+.period-badge{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:3px 9px;font-family:'DM Mono',monospace;font-size:11px;color:var(--txt)}
+
+/* stats header */
+.stats-hd{background:var(--white);border-bottom:1px solid var(--border);padding:14px 24px;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+.period-info{display:flex;flex-direction:column;gap:2px}
+.period-label{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em}
+.period-val{font-family:'DM Mono',monospace;font-size:13px;color:var(--txt)}
+
+.mzb-stats{display:flex;gap:20px;justify-content:center}
+.stat-block{text-align:center;padding:0 16px;border-right:1px solid var(--border2)}
+.stat-block:last-child{border-right:none}
+.stat-label{font-size:10px;color:var(--txt3);margin-bottom:3px}
+.stat-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500}
+.gn{color:#197A3C}.rd{color:#9A3412}.gy{color:var(--txt2)}.bl{color:var(--accent)}
+
+.mkt-stats{display:flex;gap:12px}
+.mkt-item{text-align:right}
+.mkt-name{font-size:10px;color:var(--txt3)}
+.mkt-val{font-family:'DM Mono',monospace;font-size:12px;font-weight:500}
+
+/* rating guide */
+.rating-strip{background:var(--bg);border-bottom:1px solid var(--border);padding:8px 24px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rg-label{font-size:10px;color:var(--txt3);margin-right:4px;text-transform:uppercase;letter-spacing:.06em}
+.rg-item{display:flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.rg-sb{background:var(--sb-bg);color:var(--sb-txt)}
+.rg-b{background:#D1FAE5;color:#065F46}
+.rg-h{background:var(--h-bg);color:var(--h-txt)}
+.rg-s{background:#FEE2E2;color:#991B1B}
+.rg-ss{background:#FEE2E2;color:var(--ss-txt);font-weight:700}
+.rg-div{width:1px;height:12px;background:var(--border);margin:0 4px}
+
+/* controls */
+.controls{padding:10px 24px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);background:var(--white)}
+.cat-pill{padding:4px 10px;border-radius:16px;font-size:11px;border:1px solid var(--border);background:transparent;color:var(--txt2);cursor:pointer;transition:all .12s;white-space:nowrap}
+.cat-pill.on{background:var(--txt);color:var(--white);border-color:var(--txt)}
+.cat-pill:hover:not(.on){background:var(--bg)}
+.ctl-div{width:1px;height:16px;background:var(--border);margin:0 2px}
+.cnt-label{margin-left:auto;font-size:11px;color:var(--txt3);font-family:'DM Mono',monospace}
+
+/* table */
+.tbl-wrap{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 280px)}
+table{width:100%;border-collapse:collapse;min-width:820px}
+thead{position:sticky;top:0;z-index:5}
+th{background:#F0EDE8;padding:7px 12px;text-align:right;font-size:10px;font-weight:500;color:var(--txt2);letter-spacing:.04em;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+th:nth-child(-n+3){text-align:left}
+th:hover{color:var(--txt)}
+th.sa::after{content:' ↑';font-size:9px}th.sd::after{content:' ↓';font-size:9px}
+td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--border2);white-space:nowrap;font-size:12px;transition:background .1s}
+td:nth-child(-n+3){text-align:left}
+tr:hover td{background:#FAFAF8;cursor:pointer}
+.tk{font-family:'DM Mono',monospace;font-weight:500;font-size:13px;color:var(--accent)}
+.cat{font-size:10px;color:var(--txt3);padding:1px 5px;background:var(--bg);border-radius:3px;border:1px solid var(--border2)}
+.nm{font-size:12px;color:var(--txt)}
+.pos{color:#197A3C}.neg{color:#9A3412}.neu{color:var(--txt2)}
+.rt{display:inline-flex;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.03em}
+.rt-sb{background:var(--sb-bg);color:var(--sb-txt)}
+.rt-b{background:#D1FAE5;color:#065F46}
+.rt-h{background:var(--h-bg);color:var(--h-txt)}
+.rt-s{background:#FEE2E2;color:#991B1B}
+.rt-ss{background:#FFF1F1;color:var(--ss-txt);outline:1px solid #FCA5A5}
+.upbar-wrap{display:flex;align-items:center;gap:6px}
+.upbar-track{width:48px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;flex-shrink:0}
+.upbar-fill{height:100%;border-radius:2px}
+.upbar-num{font-family:'DM Mono',monospace;font-size:12px;min-width:52px;text-align:right}
+</style>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">M</div>
+    <span class="brand-name">미주부 MZB 포트폴리오</span>
+    <span class="brand-tag">구독자 전용</span>
+  </div>
+  <div class="topbar-right">
+    <span>* 미국 현지일 기준</span>
+    <span class="period-badge">2026.03.27 → 2026.04.01</span>
+  </div>
+</div>
+
+<div class="stats-hd">
+  <div class="period-info">
+    <div class="period-label">MZB 지수 (주간)</div>
+    <div style="display:flex;gap:16px;margin-top:6px">
+      <div>
+        <div style="font-size:10px;color:var(--txt3);margin-bottom:2px">가중치 투자</div>
+        <div class="stat-val gn mono" style="font-size:20px">+6.40%</div>
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--txt3);margin-bottom:2px">균등 투자</div>
+        <div class="stat-val gn mono" style="font-size:20px">+6.61%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mzb-stats">
+    <div class="stat-block">
+      <div class="stat-label">강력 매수</div>
+      <div class="stat-val" style="color:var(--sb)">2</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">매수</div>
+      <div class="stat-val gn">6</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">보유</div>
+      <div class="stat-val" style="color:var(--h)">10</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">매도</div>
+      <div class="stat-val rd">14</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">강력 매도</div>
+      <div class="stat-val" style="color:var(--ss);font-weight:700">2</div>
+    </div>
+  </div>
+
+  <div class="mkt-stats">
+    <div class="mkt-item">
+      <div class="mkt-name">S&P 500</div>
+      <div class="mkt-val gn">+3.24%</div>
+    </div>
+    <div class="mkt-item">
+      <div class="mkt-name">나스닥</div>
+      <div class="mkt-val gn">+4.26%</div>
+    </div>
+    <div class="mkt-item">
+      <div class="mkt-name">다우</div>
+      <div class="mkt-val gn">+3.10%</div>
+    </div>
+    <div class="mkt-item">
+      <div class="mkt-name">러셀 2000</div>
+      <div class="mkt-val gn">+2.56%</div>
+    </div>
+  </div>
+</div>
+
+<div class="rating-strip">
+  <span class="rg-label">레이팅 기준</span>
+  <span class="rg-item rg-sb">강력 매수 ≥ 70%</span>
+  <span class="rg-item rg-b">매수 ≥ 30%</span>
+  <span class="rg-item rg-h">보유 ≥ 0%</span>
+  <span class="rg-item rg-s">매도 ≥ -50%</span>
+  <span class="rg-item rg-ss">강력 매도 &lt; -50%</span>
+  <div class="rg-div"></div>
+  <span style="font-size:10px;color:var(--txt3)">상승여력 = (적정주가 가중평균 - 현재가) / 현재가</span>
+</div>
+
+<div class="controls">
+  <button class="cat-pill on" onclick="setCat('전체')">전체</button>
+  <button class="cat-pill" onclick="setCat('빅테크')">빅테크</button>
+  <button class="cat-pill" onclick="setCat('AI인프라')">AI인프라</button>
+  <button class="cat-pill" onclick="setCat('AI 소프트웨어')">AI 소프트웨어</button>
+  <button class="cat-pill" onclick="setCat('헬스케어')">헬스케어</button>
+  <button class="cat-pill" onclick="setCat('전력수요')">전력수요</button>
+  <button class="cat-pill" onclick="setCat('기타')">기타</button>
+  <div class="ctl-div"></div>
+  <button class="cat-pill" onclick="sortBy('upside')" id="sb-up">상승여력순</button>
+  <button class="cat-pill" onclick="sortBy('rating')" id="sb-rt">레이팅순</button>
+  <span class="cnt-label" id="cntLabel">34개 종목</span>
+</div>
+
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr>
+      <th onclick="sortBy('ticker')">Ticker</th>
+      <th onclick="sortBy('category')">분류</th>
+      <th onclick="sortBy('name')">종목명</th>
+      <th onclick="sortBy('endPrice')">현재가</th>
+      <th onclick="sortBy('weeklyReturn')">주간수익률</th>
+      <th onclick="sortBy('fvIncome')" title="적정주가 순이익 기준">적정주가 (순이익)</th>
+      <th onclick="sortBy('fvRevenue')" title="적정주가 매출 기준">적정주가 (매출)</th>
+      <th onclick="sortBy('upside')">상승여력</th>
+      <th onclick="sortBy('rating')">MZB 레이팅</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+<script>
+const stocks=[
+  {ticker:'MU',category:'AI인프라',name:'마이크론 테크놀로지',startPrice:366.24,endPrice:366.24,weeklyReturn:0,fvIncome:633.51,fvRevenue:616.07,upside:0.8662,rating:'강력 매수'},
+  {ticker:'NVDA',category:'AI인프라',name:'엔비디아',startPrice:177.39,endPrice:177.39,weeklyReturn:0,fvIncome:298.47,fvRevenue:210.59,upside:0.72,rating:'강력 매수'},
+  {ticker:'LLY',category:'헬스케어',name:'일라이 릴리',startPrice:935.58,endPrice:935.58,weeklyReturn:0,fvIncome:1445.01,fvRevenue:758.35,upside:0.5066,rating:'매수'},
+  {ticker:'PGY',category:'핀테크',name:'파가야 테크놀로지스',startPrice:11.77,endPrice:11.77,weeklyReturn:0,fvIncome:15.14,fvRevenue:21.67,upside:0.4543,rating:'매수'},
+  {ticker:'TSM',category:'AI인프라',name:'TSMC',startPrice:339.04,endPrice:339.04,weeklyReturn:0,fvIncome:495.24,fvRevenue:311.23,upside:0.4443,rating:'매수'},
+  {ticker:'AMD',category:'AI인프라',name:'AMD',startPrice:217.50,endPrice:217.50,weeklyReturn:0,fvIncome:307.66,fvRevenue:297.65,upside:0.4082,rating:'매수'},
+  {ticker:'VST',category:'전력수요',name:'Vistra Corp',startPrice:151.18,endPrice:151.18,weeklyReturn:0,fvIncome:200.77,fvRevenue:229.18,upside:0.4312,rating:'매수'},
+  {ticker:'VRT',category:'AI인프라',name:'버티브 홀딩스',startPrice:261.29,endPrice:261.29,weeklyReturn:0,fvIncome:336.41,fvRevenue:296.67,upside:0.3146,rating:'매수'},
+  {ticker:'AVGO',category:'AI인프라',name:'브로드컴',startPrice:314.55,endPrice:314.55,weeklyReturn:0,fvIncome:398.69,fvRevenue:342.92,upside:0.2855,rating:'보유'},
+  {ticker:'FSLR',category:'전력수요',name:'퍼스트솔라',startPrice:195.32,endPrice:195.32,weeklyReturn:0,fvIncome:264.72,fvRevenue:137.66,upside:0.2962,rating:'보유'},
+  {ticker:'UNH',category:'빅테크',name:'유나이티드 헬스',startPrice:277.26,endPrice:277.26,weeklyReturn:0,fvIncome:323.18,fvRevenue:369.05,upside:0.2318,rating:'보유'},
+  {ticker:'ORCL',category:'AI 소프트웨어',name:'오라클',startPrice:146.38,endPrice:146.38,weeklyReturn:0,fvIncome:181.24,fvRevenue:146.93,upside:0.2389,rating:'보유'},
+  {ticker:'SNAP',category:'AI 소프트웨어',name:'스냅',startPrice:4.63,endPrice:4.63,weeklyReturn:0,fvIncome:5.16,fvRevenue:6.40,upside:0.19,rating:'보유'},
+  {ticker:'COHR',category:'AI인프라',name:'코히런트',startPrice:258.16,endPrice:258.16,weeklyReturn:0,fvIncome:276.75,fvRevenue:212.65,upside:0.0368,rating:'보유'},
+  {ticker:'S',category:'AI 소프트웨어',name:'센티넬원',startPrice:13.33,endPrice:13.33,weeklyReturn:0,fvIncome:14.20,fvRevenue:15.05,upside:0.0907,rating:'보유'},
+  {ticker:'LUNR',category:'우주/방산',name:'인튜이티브 머신',startPrice:23.99,endPrice:23.99,weeklyReturn:0,fvIncome:21.59,fvRevenue:47.89,upside:0.0992,rating:'보유'},
+  {ticker:'ARQT',category:'헬스케어',name:'아큐텍스 바이오',startPrice:23.63,endPrice:23.63,weeklyReturn:0,fvIncome:22.82,fvRevenue:33.47,upside:0.0491,rating:'보유'},
+  {ticker:'BE',category:'전력수요',name:'블룸 에너지',startPrice:135.63,endPrice:135.63,weeklyReturn:0,fvIncome:128.33,fvRevenue:173.53,upside:0.0021,rating:'보유'},
+  {ticker:'MSFT',category:'빅테크',name:'마이크로소프트',startPrice:373.46,endPrice:373.46,weeklyReturn:0,fvIncome:381.01,fvRevenue:235.64,upside:-0.0536,rating:'매도'},
+  {ticker:'NBIS',category:'AI인프라',name:'네비우스',startPrice:108.82,endPrice:108.82,weeklyReturn:0,fvIncome:97.94,fvRevenue:124.84,upside:-0.0706,rating:'매도'},
+  {ticker:'CRSP',category:'헬스케어',name:'크리스퍼 테라퓨틱스',startPrice:49.51,endPrice:49.51,weeklyReturn:0,fvIncome:44.56,fvRevenue:56.49,upside:-0.0718,rating:'매도'},
+  {ticker:'AMZN',category:'빅테크',name:'아마존',startPrice:209.77,endPrice:209.77,weeklyReturn:0,fvIncome:185.25,fvRevenue:261.87,upside:-0.0672,rating:'매도'},
+  {ticker:'META',category:'빅테크',name:'메타 플랫폼스',startPrice:574.46,endPrice:574.46,weeklyReturn:0,fvIncome:499.60,fvRevenue:542.83,upside:-0.1413,rating:'매도'},
+  {ticker:'SRPT',category:'헬스케어',name:'사렙타 테라퓨틱스',startPrice:23.23,endPrice:23.23,weeklyReturn:0,fvIncome:21.55,fvRevenue:20.77,upside:-0.0936,rating:'매도'},
+  {ticker:'TEM',category:'AI 소프트웨어',name:'템퍼스 AI',startPrice:47.39,endPrice:47.39,weeklyReturn:0,fvIncome:42.65,fvRevenue:48.53,upside:-0.0952,rating:'매도'},
+  {ticker:'HIMS',category:'헬스케어',name:'힘스 & 허즈',startPrice:19.14,endPrice:19.14,weeklyReturn:0,fvIncome:15.63,fvRevenue:26.07,upside:-0.1109,rating:'매도'},
+  {ticker:'NOW',category:'AI 소프트웨어',name:'서비스나우',startPrice:102.00,endPrice:102.00,weeklyReturn:0,fvIncome:93.72,fvRevenue:85.95,upside:-0.1126,rating:'매도'},
+  {ticker:'PWR',category:'전력수요',name:'퀀타서비스',startPrice:560.63,endPrice:560.63,weeklyReturn:0,fvIncome:428.57,fvRevenue:921.64,upside:-0.1068,rating:'매도'},
+  {ticker:'GOOGL',category:'빅테크',name:'구글',startPrice:295.77,endPrice:295.77,weeklyReturn:0,fvIncome:231.68,fvRevenue:186.06,upside:-0.2909,rating:'매도'},
+  {ticker:'SYM',category:'AI 로보틱스',name:'Symbotic',startPrice:53.37,endPrice:53.37,weeklyReturn:0,fvIncome:40.33,fvRevenue:77.18,upside:-0.1551,rating:'매도'},
+  {ticker:'SNPS',category:'AI 소프트웨어',name:'시놉시스',startPrice:395.95,endPrice:395.95,weeklyReturn:0,fvIncome:257.81,fvRevenue:279.31,upside:-0.4078,rating:'매도'},
+  {ticker:'ASML',category:'AI인프라',name:'ASML',startPrice:1317.23,endPrice:1317.23,weeklyReturn:0,fvIncome:1091.42,fvRevenue:469.99,upside:-0.3001,rating:'매도'},
+  {ticker:'TSLA',category:'전기차',name:'테슬라',startPrice:360.59,endPrice:360.59,weeklyReturn:0,fvIncome:136.35,fvRevenue:150.48,upside:-0.7384,rating:'강력 매도'},
+  {ticker:'PLTR',category:'AI 소프트웨어',name:'팔란티어',startPrice:148.46,endPrice:148.46,weeklyReturn:0,fvIncome:88.93,fvRevenue:48.63,upside:-0.5355,rating:'강력 매도'},
+];
+
+const catGroups={'빅테크':'빅테크','AI인프라':'AI인프라','AI 소프트웨어':'AI 소프트웨어','헬스케어':'헬스케어','전력수요':'전력수요','기타':['핀테크','우주/방산','전기차','AI 로보틱스']};
+const ratingOrder={'강력 매수':0,'매수':1,'보유':2,'매도':3,'강력 매도':4};
+const rCls={'강력 매수':'rt-sb','매수':'rt-b','보유':'rt-h','매도':'rt-s','강력 매도':'rt-ss'};
+
+let curCat='전체',curSort='upside',sortDir=-1;
+
+function fmt$(n){if(n==null)return'—';if(n>=1000)return'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return'$'+n.toFixed(2);}
+function fmtP(n){if(n==null)return'—';return(n>=0?'+':'')+( n*100).toFixed(2)+'%';}
+function pCls(n){return n==null?'neu':n>0?'pos':n<0?'neg':'neu';}
+
+function setCat(c){
+  curCat=c;
+  document.querySelectorAll('.cat-pill').forEach(b=>{
+    b.classList.toggle('on',b.textContent.trim()===c);
+  });
+  render();
+}
+
+function sortBy(k){
+  if(curSort===k)sortDir*=-1;else{curSort=k;sortDir=k==='upside'||k==='weeklyReturn'?-1:1;}
+  render();
+}
+
+function render(){
+  let data=[...stocks];
+  if(curCat!=='전체'){
+    const grp=catGroups[curCat];
+    if(Array.isArray(grp))data=data.filter(s=>grp.includes(s.category));
+    else data=data.filter(s=>s.category===curCat);
+  }
+  data.sort((a,b)=>{
+    let av=a[curSort],bv=b[curSort];
+    if(curSort==='rating'){av=ratingOrder[a.rating];bv=ratingOrder[b.rating];}
+    if(av==null)return 1;if(bv==null)return -1;
+    if(typeof av==='string')return sortDir*av.localeCompare(bv,'ko');
+    return sortDir*(av-bv);
+  });
+  document.getElementById('cntLabel').textContent=data.length+'개 종목';
+  const maxAbs=Math.max(...data.map(s=>Math.abs(s.upside)),1);
+  document.getElementById('tbody').innerHTML=data.map((s,i)=>{
+    const up=s.upside;
+    const bw=Math.min(Math.abs(up)/maxAbs*100,100).toFixed(1);
+    const bc=up>=0.3?'#197A3C':up>=0?'#6EAF7A':up>=-0.5?'#D97706':'#DC2626';
+    const rowBg=i%2===0?'':'background:#FDFCFA';
+    return`<tr style="${rowBg}">
+      <td><span class="tk">${s.ticker}</span></td>
+      <td><span class="cat">${s.category}</span></td>
+      <td><span class="nm">${s.name}</span></td>
+      <td class="mono">${fmt$(s.endPrice)}</td>
+      <td class="mono ${pCls(s.weeklyReturn)}">${fmtP(s.weeklyReturn)}</td>
+      <td class="mono">${fmt$(s.fvIncome)}</td>
+      <td class="mono">${fmt$(s.fvRevenue)}</td>
+      <td>
+        <div class="upbar-wrap">
+          <div class="upbar-track"><div class="upbar-fill" style="width:${bw}%;background:${bc}"></div></div>
+          <span class="upbar-num ${pCls(up)}">${fmtP(up)}</span>
+        </div>
+      </td>
+      <td><span class="rt ${rCls[s.rating]}">${s.rating}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.querySelectorAll('th').forEach(th=>{
+    th.classList.remove('sa','sd');
+    const k=th.getAttribute('onclick')?.replace("sortBy('","").replace("')","");
+    if(k===curSort)th.classList.add(sortDir===1?'sa':'sd');
+  });
+}
+render();
+</script>
